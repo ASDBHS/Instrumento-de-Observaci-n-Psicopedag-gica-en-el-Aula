@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrumento de Observación Psicopedagógica · SDBHS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        /* ============================================
+           VARIABLES Y RESET BASE
+           ============================================ */
+        :root {
+            --azul-sdbhs: #002060;
+            --rojo-sdbhs: #C00000;
+            --azul-claro: #e7eef6;
+            --azul-cbc: #fef3c7;
+            --azul-cbc-borde: #f59e0b;
+            --gris-fondo: #f8fafc;
+            --gris-borde: #cbd5e1;
+            --gris-borde-claro: #e2e8f0;
+            --texto: #1e293b;
+            --texto-claro: #64748b;
+            --rosa-confidencial: #fff1f2;
+            --rojo-confidencial: #9f1239;
+            --borde-confidencial: #f43f5e;
+            --verde-logro: #166534;
+            --verde-logro-bg: #dcfce7;
+            --naranja-alerta: #b45309;
+            --naranja-alerta-bg: #fef3c7;
+            --rojo-alerta: #991b1b;
+            --rojo-alerta-bg: #fee2e2;
+
+            /* Colores específicos por bloque */
+            --bloque-socio: #db2777;
+            --bloque-socio-bg: #fdf2f8;
+            --bloque-cogn: #2563eb;
+            --bloque-cogn-bg: #eff6ff;
+            --bloque-cond: #ea580c;
+            --bloque-cond-bg: #fff7ed;
+            --bloque-doc: #059669;
+            --bloque-doc-bg: #ecfdf5;
+        }
+
+        * { box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--texto);
+            background-color: #eef2f7;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* ============================================
+           BARRA DE ACCIONES (solo pantalla)
+           ============================================ */
+        .toolbar {
+            position: sticky;
+            top: 0;
+            background: var(--azul-sdbhs);
+            margin: -20px -20px 20px -20px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            z-index: 100;
+        }
+        .toolbar button {
+            background: white;
+            color: var(--azul-sdbhs);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .toolbar button:hover { background: var(--azul-claro); }
+        .toolbar button.primary-drive {
+            background: #1a73e8;
+            color: white;
+        }
+        .toolbar button.primary-drive:hover { background: #1557b0; }
+        .toolbar button.secondary {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+        }
+        .toolbar button.secondary:hover { background: rgba(255,255,255,0.1); }
+        .toolbar button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ============================================
+           CABECERA
+           ============================================ */
+        .header {
+            text-align: center;
+            border-bottom: 3px solid var(--azul-sdbhs);
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+        .header .institucion {
+            font-size: 11px;
+            color: var(--texto-claro);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .header h1 {
+            color: var(--azul-sdbhs);
+            font-size: 18px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .header h2 {
+            color: var(--texto);
+            font-size: 13px;
+            margin: 6px 0 4px;
+            font-weight: 600;
+        }
+        .header p {
+            font-size: 12px;
+            margin: 2px 0;
+            color: var(--texto-claro);
+            font-weight: 500;
+        }
+        .header .version-badge {
+            display: inline-block;
+            background: var(--azul-sdbhs);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        /* ============================================
+           CAJA DE ESCALA
+           ============================================ */
+        .scale-box {
+            background-color: #f1f5f9;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 18px;
+            font-size: 12px;
+            border-left: 5px solid var(--azul-sdbhs);
+        }
+        .scale-title {
+            font-weight: bold;
+            color: var(--azul-sdbhs);
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        .scale-items {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .scale-item {
+            background: white;
+            padding: 8px 10px;
+            border-radius: 3px;
+            border: 1px solid var(--gris-borde-claro);
+            line-height: 1.4;
+        }
+        .scale-item strong { color: var(--azul-sdbhs); display: block; margin-bottom: 2px; }
+        .scale-item .desc { font-size: 11px; color: var(--texto-claro); }
+
+        /* ============================================
+           SECCIÓN DE DATOS GENERALES
+           ============================================ */
+        .section-title {
+            background-color: var(--azul-sdbhs);
+            color: white;
+            padding: 8px 14px;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-top: 18px;
+            margin-bottom: 0;
+            border-radius: 4px 4px 0 0;
+        }
+        .data-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            margin-bottom: 18px;
+            border: 1px solid var(--gris-borde-claro);
+            border-top: none;
+        }
+        .data-field {
+            display: grid;
+            grid-template-columns: 35% 1fr;
+            border-bottom: 1px solid var(--gris-borde-claro);
+            border-right: 1px solid var(--gris-borde-claro);
+        }
+        .data-field:nth-child(even) { border-right: none; }
+        .data-field.full {
+            grid-column: 1 / -1;
+            grid-template-columns: 17.5% 1fr;
+            border-right: none;
+        }
+        .label {
+            font-weight: bold;
+            color: var(--azul-sdbhs);
+            background-color: var(--gris-fondo);
+            padding: 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        .data-field input[type="text"],
+        .data-field input[type="date"],
+        .data-field input[type="time"] {
+            border: none;
+            padding: 8px;
+            font-size: 13px;
+            width: 100%;
+            font-family: inherit;
+            background: transparent;
+            color: var(--texto);
+        }
+        .data-field input:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+            background: #fffef5;
+        }
+        .motivo-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            padding: 8px;
+            align-items: center;
+        }
+        .motivo-options label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .motivo-options input[type="radio"] {
+            accent-color: var(--azul-sdbhs);
+            margin: 0;
+        }
+        .motivo-options input[type="text"] {
+            border: none;
+            border-bottom: 1px dashed var(--gris-borde);
+            padding: 2px 4px;
+            font-size: 12px;
+            font-family: inherit;
+            background: transparent;
+            min-width: 120px;
+        }
+
+        /* ============================================
+           TABLA DE INDICADORES (desktop/tablet)
+           ============================================ */
+        .indicators-wrapper { margin-bottom: 20px; }
+        table.indicators {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table.indicators th {
+            background-color: var(--azul-sdbhs);
+            color: white;
+            padding: 8px 6px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        table.indicators td {
+            border: 1px solid var(--gris-borde);
+            padding: 8px 6px;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+        .col-code { width: 38px; text-align: center; font-weight: 600; color: var(--texto-claro); font-family: 'Consolas', monospace; font-size: 11px; }
+        .col-star { width: 28px; text-align: center; font-size: 14px; }
+        .col-level { width: 50px; text-align: center; }
+        .col-obs { width: 28%; }
+        .col-obs textarea {
+            width: 100%;
+            border: none;
+            padding: 4px;
+            font-size: 11px;
+            font-family: inherit;
+            background: transparent;
+            resize: vertical;
+            min-height: 44px;
+        }
+        .col-obs textarea:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+            background: #fffef5;
+        }
+        .bloque-header td {
+            background-color: var(--azul-claro);
+            font-weight: bold;
+            color: var(--azul-sdbhs);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            padding: 10px;
+        }
+        .bloque-header.bloque-I td { background: var(--bloque-socio-bg); color: var(--bloque-socio); border-left: 4px solid var(--bloque-socio); }
+        .bloque-header.bloque-II td { background: var(--bloque-cogn-bg); color: var(--bloque-cogn); border-left: 4px solid var(--bloque-cogn); }
+        .bloque-header.bloque-III td { background: var(--bloque-cond-bg); color: var(--bloque-cond); border-left: 4px solid var(--bloque-cond); }
+        .bloque-header.bloque-IV td { background: var(--bloque-doc-bg); color: var(--bloque-doc); border-left: 4px solid var(--bloque-doc); }
+        tr.cbc-indicator td { background-color: #fefce8; }
+        .star-cbc {
+            color: var(--azul-cbc-borde);
+            font-size: 16px;
+        }
+        .star-standard {
+            color: var(--texto-claro);
+            font-size: 12px;
+        }
+        .rating-cell {
+            text-align: center;
+            padding: 4px !important;
+        }
+        .rating-cell input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--azul-sdbhs);
+            margin: 0;
+        }
+        .descriptor-cell {
+            line-height: 1.4;
+        }
+
+        /* ============================================
+           FILA DE OBSERVACIÓN POR BLOQUE
+           ============================================ */
+        tr.bloque-obs td {
+            background-color: var(--gris-fondo);
+            padding: 12px;
+            border-top: 2px solid var(--azul-sdbhs);
+        }
+        tr.bloque-obs.bloque-I td { border-top-color: var(--bloque-socio); background-color: #fdf2f8; }
+        tr.bloque-obs.bloque-II td { border-top-color: var(--bloque-cogn); background-color: #eff6ff; }
+        tr.bloque-obs.bloque-III td { border-top-color: var(--bloque-cond); background-color: #fff7ed; }
+        tr.bloque-obs.bloque-IV td { border-top-color: var(--bloque-doc); background-color: #ecfdf5; }
+        .bloque-obs-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--azul-sdbhs);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 6px;
+        }
+        tr.bloque-obs.bloque-I .bloque-obs-label { color: var(--bloque-socio); }
+        tr.bloque-obs.bloque-II .bloque-obs-label { color: var(--bloque-cogn); }
+        tr.bloque-obs.bloque-III .bloque-obs-label { color: var(--bloque-cond); }
+        tr.bloque-obs.bloque-IV .bloque-obs-label { color: var(--bloque-doc); }
+        tr.bloque-obs textarea {
+            width: 100%;
+            border: 1px solid var(--gris-borde-claro);
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-family: inherit;
+            font-size: 12px;
+            min-height: 80px;
+            resize: vertical;
+            background: white;
+            line-height: 1.5;
+        }
+        tr.bloque-obs textarea:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+            background: #fffef5;
+        }
+
+        /* Tarjeta de observación por bloque (mobile) */
+        .bloque-obs-card {
+            border-top: 2px solid var(--azul-sdbhs) !important;
+            background-color: var(--gris-fondo) !important;
+            margin-bottom: 8px;
+        }
+        .bloque-obs-card.bloque-I { border-top-color: var(--bloque-socio) !important; background-color: #fdf2f8 !important; }
+        .bloque-obs-card.bloque-II { border-top-color: var(--bloque-cogn) !important; background-color: #eff6ff !important; }
+        .bloque-obs-card.bloque-III { border-top-color: var(--bloque-cond) !important; background-color: #fff7ed !important; }
+        .bloque-obs-card.bloque-IV { border-top-color: var(--bloque-doc) !important; background-color: #ecfdf5 !important; }
+        .bloque-obs-card .bloque-obs-label { margin-bottom: 8px; font-size: 12px; }
+        .bloque-obs-card.bloque-I .bloque-obs-label { color: var(--bloque-socio); }
+        .bloque-obs-card.bloque-II .bloque-obs-label { color: var(--bloque-cogn); }
+        .bloque-obs-card.bloque-III .bloque-obs-label { color: var(--bloque-cond); }
+        .bloque-obs-card.bloque-IV .bloque-obs-label { color: var(--bloque-doc); }
+
+        /* ============================================
+           VISTA EN TARJETAS (solo mobile)
+           ============================================ */
+        .indicators-cards { display: none; }
+        .bloque-card-header {
+            background-color: var(--azul-claro);
+            color: var(--azul-sdbhs);
+            padding: 10px 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            margin-top: 12px;
+            border-radius: 4px 4px 0 0;
+        }
+        .bloque-card-header.bloque-I { background: var(--bloque-socio-bg); color: var(--bloque-socio); }
+        .bloque-card-header.bloque-II { background: var(--bloque-cogn-bg); color: var(--bloque-cogn); }
+        .bloque-card-header.bloque-III { background: var(--bloque-cond-bg); color: var(--bloque-cond); }
+        .bloque-card-header.bloque-IV { background: var(--bloque-doc-bg); color: var(--bloque-doc); }
+        .indicator-card {
+            border: 1px solid var(--gris-borde);
+            border-top: none;
+            padding: 12px;
+            background: white;
+        }
+        .indicator-card.cbc-indicator {
+            background: #fefce8;
+            border-left: 3px solid var(--azul-cbc-borde);
+        }
+        .indicator-card-title {
+            font-weight: 600;
+            color: var(--texto);
+            margin-bottom: 10px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .indicator-card-code {
+            display: inline-block;
+            background: var(--azul-sdbhs);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-right: 8px;
+            font-weight: 600;
+            font-family: 'Consolas', monospace;
+        }
+        .indicator-card-star {
+            display: inline-block;
+            color: var(--azul-cbc-borde);
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        .rating-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .rating-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 4px;
+            border: 1.5px solid var(--gris-borde);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: white;
+            user-select: none;
+            position: relative;
+        }
+        .rating-option:hover {
+            border-color: var(--azul-sdbhs);
+            background: var(--gris-fondo);
+        }
+        .rating-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .rating-option:has(input[type="radio"]:checked) {
+            background: var(--azul-sdbhs);
+            border-color: var(--azul-sdbhs);
+            color: white;
+        }
+        .rating-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .rating-content .num {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .card-obs-input {
+            width: 100%;
+            border: 1px solid var(--gris-borde);
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            min-height: 50px;
+            resize: vertical;
+        }
+        .card-obs-input:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+        }
+        .card-obs-label {
+            display: block;
+            font-size: 11px;
+            color: var(--texto-claro);
+            margin-bottom: 4px;
+            margin-top: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================
+           FORTALEZAS / ÁREAS DE INTERVENCIÓN
+           ============================================ */
+        .fort-area-section {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border: 2px solid var(--azul-sdbhs);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .fort-area-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .fort-area-col:first-child {
+            border-right: 1px solid var(--gris-borde-claro);
+        }
+        .fort-area-title {
+            background-color: var(--azul-sdbhs);
+            color: white;
+            padding: 10px 14px;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .fort-area-title.verde {
+            background-color: var(--verde-logro);
+        }
+        .fort-area-title.naranja {
+            background-color: var(--naranja-alerta);
+        }
+        .fort-area-list {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+        .fort-area-item {
+            display: grid;
+            grid-template-columns: 30px 1fr;
+            align-items: start;
+            gap: 6px;
+        }
+        .fort-area-num {
+            font-weight: 700;
+            color: var(--azul-sdbhs);
+            font-size: 13px;
+            padding-top: 6px;
+        }
+        .fort-area-item input {
+            width: 100%;
+            border: 1px solid var(--gris-borde-claro);
+            border-radius: 3px;
+            padding: 6px 8px;
+            font-family: inherit;
+            font-size: 12px;
+            background: white;
+        }
+        .fort-area-item input:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+            background: #fffef5;
+        }
+
+        /* ============================================
+           RECOMENDACIONES Y PRÓXIMOS PASOS
+           ============================================ */
+        .recom-section {
+            margin-top: 20px;
+            border: 1px solid var(--azul-sdbhs);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .recom-title {
+            background-color: var(--azul-sdbhs);
+            color: white;
+            padding: 10px 14px;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .recom-body {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .recom-block label {
+            display: block;
+            font-weight: 700;
+            color: var(--azul-sdbhs);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .recom-block textarea {
+            width: 100%;
+            border: 1px solid var(--gris-borde-claro);
+            border-radius: 3px;
+            padding: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            min-height: 60px;
+            resize: vertical;
+        }
+        .recom-block textarea:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+            background: #fffef5;
+        }
+        .acciones-block {
+            background: var(--gris-fondo);
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid var(--azul-sdbhs);
+        }
+        .acciones-block label.acciones-title {
+            display: block;
+            font-weight: 700;
+            color: var(--azul-sdbhs);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        .acciones-options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .acciones-options label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        .acciones-options input[type="checkbox"] {
+            accent-color: var(--azul-sdbhs);
+            width: 16px;
+            height: 16px;
+        }
+        .acciones-options input[type="text"] {
+            border: none;
+            border-bottom: 1px dashed var(--gris-borde);
+            padding: 2px 4px;
+            font-size: 12px;
+            font-family: inherit;
+            background: transparent;
+            min-width: 180px;
+            flex: 1;
+        }
+
+        /* ============================================
+           NOTAS ADICIONALES
+           ============================================ */
+        .notas-section {
+            margin-top: 20px;
+            border: 1px solid var(--azul-sdbhs);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .notas-title {
+            background-color: var(--azul-sdbhs);
+            color: white;
+            padding: 10px 14px;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .notas-subtitle {
+            font-weight: 400;
+            font-size: 11px;
+            text-transform: none;
+            letter-spacing: 0;
+            opacity: 0.85;
+            display: block;
+            margin-top: 2px;
+        }
+        .notas-body { padding: 12px; }
+        .notas-body textarea {
+            width: 100%;
+            border: 1px solid var(--gris-borde-claro);
+            border-radius: 3px;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            min-height: 200px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        .notas-body textarea:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+        }
+
+        /* ============================================
+           LEYENDA CBC Y CONFIDENCIALIDAD
+           ============================================ */
+        .legend-box {
+            margin-top: 20px;
+            background-color: var(--azul-cbc);
+            border-left: 5px solid var(--azul-cbc-borde);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .legend-box strong { color: #92400e; }
+        .conceptos-list {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .concepto-chip {
+            background: white;
+            border: 1px solid var(--azul-cbc-borde);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #78350f;
+            font-weight: 600;
+        }
+
+        .confidential {
+            margin-top: 18px;
+            background-color: var(--rosa-confidencial);
+            border: 1px solid var(--borde-confidencial);
+            padding: 12px;
+            font-size: 11px;
+            text-align: justify;
+            color: var(--rojo-confidencial);
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--texto-claro);
+            padding-bottom: 10px;
+        }
+
+        /* ============================================
+           MODAL (CONFIGURACIÓN DRIVE)
+           ============================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 8px;
+            max-width: 540px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            background: var(--azul-sdbhs);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .modal-close {
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0;
+            width: 28px;
+            height: 28px;
+            line-height: 1;
+        }
+        .modal-body {
+            padding: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .modal-body p { margin: 0 0 10px; }
+        .modal-body label {
+            display: block;
+            font-weight: 600;
+            color: var(--azul-sdbhs);
+            margin: 12px 0 4px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .modal-body input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--gris-borde);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .modal-body input[type="text"]:focus {
+            outline: 2px solid var(--azul-sdbhs);
+            outline-offset: -2px;
+        }
+        .modal-help {
+            background: var(--azul-claro);
+            border-left: 3px solid var(--azul-sdbhs);
+            padding: 10px 12px;
+            font-size: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        .modal-help ol { margin: 6px 0 0 18px; padding: 0; }
+        .modal-help li { margin-bottom: 4px; }
+        .modal-help code {
+            background: white;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            border: 1px solid var(--gris-borde-claro);
+        }
+        .modal-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--gris-borde-claro);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .modal-footer button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .modal-footer .btn-save {
+            background: var(--azul-sdbhs);
+            color: white;
+        }
+        .modal-footer .btn-save:hover { background: #001540; }
+        .modal-footer .btn-cancel {
+            background: white;
+            color: var(--texto);
+            border: 1px solid var(--gris-borde);
+        }
+        .modal-footer .btn-cancel:hover { background: var(--gris-fondo); }
+
+        /* Notificación Drive */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--verde-logro);
+            color: white;
+            padding: 14px 18px;
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 9999;
+            max-width: 360px;
+            font-size: 13px;
+            display: none;
+        }
+        .toast.active { display: block; }
+        .toast.error { background: var(--rojo-alerta); }
+        .toast.info { background: var(--azul-sdbhs); }
+        .toast a {
+            color: white;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+        .toast .close-toast {
+            float: right;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 12px;
+            line-height: 1;
+        }
+
+        /* ============================================
+           TABLET (768px - 1024px)
+           ============================================ */
+        @media (max-width: 1024px) {
+            .container { padding: 16px; }
+            .header h1 { font-size: 16px; }
+            .scale-items { grid-template-columns: repeat(2, 1fr); }
+            table.indicators td,
+            table.indicators th { font-size: 11px; padding: 6px 4px; }
+            .col-obs { width: 22%; }
+            .col-obs textarea { font-size: 10px; }
+        }
+
+        /* ============================================
+           MOBILE (< 768px)
+           ============================================ */
+        @media (max-width: 767px) {
+            body { font-size: 14px; }
+            .container { padding: 12px; box-shadow: none; }
+            .toolbar {
+                margin: -12px -12px 16px -12px;
+                padding: 10px 12px;
+            }
+            .toolbar button {
+                font-size: 12px;
+                padding: 8px 10px;
+                flex: 1;
+                min-width: 0;
+            }
+            .header h1 { font-size: 15px; line-height: 1.3; }
+            .header h2 { font-size: 12px; }
+            .header p { font-size: 11px; }
+            .scale-items { grid-template-columns: 1fr; gap: 4px; }
+            .scale-item { font-size: 11px; }
+
+            .data-section { grid-template-columns: 1fr; }
+            .data-field {
+                grid-template-columns: 40% 1fr;
+                border-right: none !important;
+            }
+            .data-field.full { grid-template-columns: 40% 1fr; }
+            .label { font-size: 11px; padding: 8px 6px; }
+
+            table.indicators { display: none; }
+            .indicators-cards { display: block; }
+
+            .fort-area-section { grid-template-columns: 1fr; }
+            .fort-area-col:first-child { border-right: none; border-bottom: 1px solid var(--gris-borde-claro); }
+        }
+
+        @media (max-width: 399px) {
+            .rating-row { gap: 4px; }
+            .rating-option { padding: 8px 2px; }
+            .rating-content .num { font-size: 14px; }
+            .rating-content { font-size: 9px; }
+        }
+
+        /* ============================================
+           MODO EXPORTACIÓN PDF (forzar A4)
+           ============================================ */
+        body.pdf-export-mode {
+            background: white !important;
+            font-size: 9pt !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        body.pdf-export-mode .container {
+            max-width: 794px !important;
+            width: 794px !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            box-shadow: none !important;
+        }
+        body.pdf-export-mode .toolbar { display: none !important; }
+        body.pdf-export-mode table.indicators { display: table !important; }
+        body.pdf-export-mode .indicators-cards { display: none !important; }
+        body.pdf-export-mode .data-section {
+            grid-template-columns: 1fr 1fr !important;
+        }
+        body.pdf-export-mode .data-field {
+            border-right: 1px solid var(--gris-borde-claro) !important;
+        }
+        body.pdf-export-mode .data-field:nth-child(even) {
+            border-right: none !important;
+        }
+        body.pdf-export-mode .data-field.full {
+            grid-template-columns: 17.5% 1fr !important;
+            border-right: none !important;
+        }
+        body.pdf-export-mode .scale-items {
+            grid-template-columns: repeat(4, 1fr) !important;
+        }
+        body.pdf-export-mode .fort-area-section {
+            grid-template-columns: 1fr 1fr !important;
+        }
+        body.pdf-export-mode .fort-area-col:first-child {
+            border-right: 1px solid var(--gris-borde-claro) !important;
+            border-bottom: none !important;
+        }
+        body.pdf-export-mode input[type="text"],
+        body.pdf-export-mode input[type="date"],
+        body.pdf-export-mode input[type="time"],
+        body.pdf-export-mode textarea {
+            border: none !important;
+            background: transparent !important;
+            color: var(--texto) !important;
+        }
+        body.pdf-export-mode textarea {
+            resize: none !important;
+            overflow: visible !important;
+        }
+        body.pdf-export-mode .header h1 { font-size: 14pt !important; }
+        body.pdf-export-mode .header h2 { font-size: 11pt !important; }
+        body.pdf-export-mode .header p { font-size: 9pt !important; }
+        body.pdf-export-mode table.indicators th { font-size: 8pt !important; padding: 5px !important; }
+        body.pdf-export-mode table.indicators td { font-size: 8pt !important; padding: 4px !important; }
+        body.pdf-export-mode .col-obs textarea { font-size: 8pt !important; }
+
+        /* ============================================
+           IMPRESIÓN
+           ============================================ */
+        @media print {
+            @page { size: A4; margin: 12mm; }
+            body { background: white; font-size: 9pt; line-height: 1.4; }
+            .container { max-width: 100%; padding: 0; box-shadow: none; margin: 0; }
+            .toolbar { display: none !important; }
+            .modal-overlay { display: none !important; }
+            .toast { display: none !important; }
+            .header h1 { font-size: 14pt; }
+            .header h2 { font-size: 11pt; }
+            .header p { font-size: 9pt; }
+
+            table.indicators { display: table !important; page-break-inside: auto; }
+            .indicators-cards { display: none !important; }
+            table.indicators th { font-size: 8pt; padding: 5px; }
+            table.indicators td { font-size: 8pt; padding: 4px; }
+            tr { page-break-inside: avoid; }
+
+            input[type="text"],
+            input[type="date"],
+            input[type="time"],
+            textarea {
+                border: none !important;
+                background: transparent !important;
+                font-family: inherit !important;
+                font-size: inherit !important;
+                color: var(--texto) !important;
+                padding: 2px !important;
+                resize: none !important;
+            }
+            input[type="radio"] { accent-color: var(--azul-sdbhs); }
+            input[type="checkbox"] { accent-color: var(--azul-sdbhs); }
+            .data-section { grid-template-columns: 1fr 1fr !important; }
+            .scale-items { grid-template-columns: repeat(4, 1fr) !important; }
+            .fort-area-section { grid-template-columns: 1fr 1fr !important; }
+            .fort-area-col:first-child { border-right: 1px solid var(--gris-borde-claro) !important; border-bottom: none !important; }
+            textarea { min-height: auto; overflow: visible; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Barra de acciones -->
+        <div class="toolbar">
+            <button onclick="descargarPDF()" title="Descargar como archivo PDF">📥 Descargar PDF</button>
+            <button class="primary-drive" onclick="subirADrive()" title="Subir directamente a Google Drive">☁️ Subir a Drive</button>
+            <button class="secondary" onclick="abrirConfig()" title="Configurar Google Drive">⚙️ Drive</button>
+            <button class="secondary" onclick="window.print()" title="Imprimir o guardar usando el diálogo del navegador">🖨️ Imprimir</button>
+            <button class="secondary" onclick="limpiarFormulario()" title="Borrar todo">🗑️ Limpiar</button>
+        </div>
+
+        <!-- Cabecera institucional -->
+        <div class="header">
+            <div class="institucion">SDBHS · Departamento Psicopedagógico</div>
+            <h1>Instrumento de Observación Psicopedagógica en el Aula</h1>
+            <h2>Foco principal: el estudiante &nbsp;·&nbsp; Foco complementario: el docente</h2>
+            <p>San Diego Bilingual High School · Primaria y Secundaria</p>
+            <span class="version-badge">VERSIÓN 2.0 — ALINEADA CON LA GUÍA DE PLANIFICACIÓN CONCEPTUAL CBC–IGE · 2026</span>
+        </div>
+
+        <!-- Escala de valoración -->
+        <div class="scale-box">
+            <span class="scale-title">ESCALA DE VALORACIÓN</span>
+            <div class="scale-items">
+                <div class="scale-item">
+                    <strong>1. Inicial</strong>
+                    <span class="desc">La competencia no se manifiesta o requiere supervisión técnica total para ejecutarse.</span>
+                </div>
+                <div class="scale-item">
+                    <strong>2. En Desarrollo</strong>
+                    <span class="desc">Ejecución intermitente; demuestra conocimiento pero requiere apoyo en situaciones complejas.</span>
+                </div>
+                <div class="scale-item">
+                    <strong>3. Competente</strong>
+                    <span class="desc">Cumple con el estándar de forma consistente y autónoma en sus funciones habituales.</span>
+                </div>
+                <div class="scale-item">
+                    <strong>4. Experto</strong>
+                    <span class="desc">Supera el estándar; aplica la habilidad con maestría y capacidad de guiar a otros.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos generales -->
+        <div class="section-title">Datos generales de la observación</div>
+        <div class="data-section">
+            <div class="data-field">
+                <div class="label">Estudiante observado/a</div>
+                <input type="text" name="estudiante">
+            </div>
+            <div class="data-field">
+                <div class="label">Edad / Grado</div>
+                <input type="text" name="edad_grado">
+            </div>
+            <div class="data-field">
+                <div class="label">Asignatura observada</div>
+                <input type="text" name="asignatura">
+            </div>
+            <div class="data-field">
+                <div class="label">Docente a cargo</div>
+                <input type="text" name="docente">
+            </div>
+            <div class="data-field">
+                <div class="label">Fecha y hora</div>
+                <input type="text" name="fecha_hora" placeholder="dd/mm/aaaa — hh:mm">
+            </div>
+            <div class="data-field">
+                <div class="label">Duración</div>
+                <input type="text" name="duracion" placeholder="ej. 45 min">
+            </div>
+            <div class="data-field full">
+                <div class="label">Motivo</div>
+                <div class="motivo-options">
+                    <label><input type="radio" name="motivo" value="rutinaria"> Rutinaria</label>
+                    <label><input type="radio" name="motivo" value="solicitud_docente"> Solicitud docente</label>
+                    <label><input type="radio" name="motivo" value="solicitud_familia"> Solicitud familia</label>
+                    <label><input type="radio" name="motivo" value="otro"> Otro: <input type="text" name="motivo_otro"></label>
+                </div>
+            </div>
+            <div class="data-field full">
+                <div class="label">Observador/a</div>
+                <input type="text" name="observador">
+            </div>
+        </div>
+
+        <!-- Tabla de observación -->
+        <div class="section-title">Tabla de observación — Foco estudiante y docente <span style="font-weight:400; font-size:11px; text-transform:none; letter-spacing:0; opacity:0.9;">(marque el nivel para cada dimensión)</span></div>
+        <div class="indicators-wrapper">
+            <table class="indicators" id="tabla-indicadores">
+                <thead>
+                    <tr>
+                        <th class="col-code">#</th>
+                        <th class="col-star">★</th>
+                        <th>Dimensión</th>
+                        <th class="col-level">1<br><span style="font-weight:400;font-size:9px">Inicial</span></th>
+                        <th class="col-level">2<br><span style="font-weight:400;font-size:9px">En des.</span></th>
+                        <th class="col-level">3<br><span style="font-weight:400;font-size:9px">Comp.</span></th>
+                        <th class="col-level">4<br><span style="font-weight:400;font-size:9px">Experto</span></th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-tbody"></tbody>
+            </table>
+            <div class="indicators-cards" id="tarjetas-indicadores"></div>
+        </div>
+
+        <!-- Fortalezas y Áreas de Intervención -->
+        <div class="fort-area-section">
+            <div class="fort-area-col">
+                <div class="fort-area-title verde">⭐ Fortalezas psicopedagógicas principales</div>
+                <div class="fort-area-list">
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">1.</div>
+                        <input type="text" name="fortaleza_1">
+                    </div>
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">2.</div>
+                        <input type="text" name="fortaleza_2">
+                    </div>
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">3.</div>
+                        <input type="text" name="fortaleza_3">
+                    </div>
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">4.</div>
+                        <input type="text" name="fortaleza_4">
+                    </div>
+                </div>
+            </div>
+            <div class="fort-area-col">
+                <div class="fort-area-title naranja">🎯 Áreas prioritarias de intervención</div>
+                <div class="fort-area-list">
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">1.</div>
+                        <input type="text" name="area_1">
+                    </div>
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">2.</div>
+                        <input type="text" name="area_2">
+                    </div>
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">3.</div>
+                        <input type="text" name="area_3">
+                    </div>
+                    <div class="fort-area-item">
+                        <div class="fort-area-num">4.</div>
+                        <input type="text" name="area_4">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recomendaciones y Próximos Pasos -->
+        <div class="recom-section">
+            <div class="recom-title">📋 Recomendaciones y próximos pasos</div>
+            <div class="recom-body">
+                <div class="recom-block">
+                    <label>Para el estudiante:</label>
+                    <textarea name="recom_estudiante"></textarea>
+                </div>
+                <div class="recom-block">
+                    <label>Para el o los docentes:</label>
+                    <textarea name="recom_docentes"></textarea>
+                </div>
+                <div class="recom-block">
+                    <label>Para la familia:</label>
+                    <textarea name="recom_familia"></textarea>
+                </div>
+                <div class="acciones-block">
+                    <label class="acciones-title">Acciones del Departamento Psicopedagógico:</label>
+                    <div class="acciones-options">
+                        <label><input type="checkbox" name="acc_rutinaria"> Continuar observación rutinaria</label>
+                        <label><input type="checkbox" name="acc_focalizada"> Programar nueva observación focalizada</label>
+                        <label><input type="checkbox" name="acc_docentes"> Reunión con docentes</label>
+                        <label><input type="checkbox" name="acc_familia"> Reunión con familia</label>
+                        <label style="flex-wrap:wrap; gap:6px;">
+                            <span style="display:inline-flex; align-items:center; gap:6px;"><input type="checkbox" name="acc_derivacion"> Derivación externa (especificar):</span>
+                            <input type="text" name="acc_derivacion_texto">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notas Adicionales -->
+        <div class="notas-section">
+            <div class="notas-title">
+                📝 Notas adicionales
+                <span class="notas-subtitle">Observaciones cualitativas, hipótesis psicopedagógicas, dinámicas grupales, eventos significativos</span>
+            </div>
+            <div class="notas-body">
+                <textarea name="notas_adicionales"></textarea>
+            </div>
+        </div>
+
+        <!-- Leyenda CBC/IGE -->
+        <div class="legend-box">
+            <strong>★ = Indicador alineado con la Planificación Conceptual CBC/IGE</strong> · Los 13 conceptos básicos:
+            <div class="conceptos-list">
+                <span class="concepto-chip">Cambio</span>
+                <span class="concepto-chip">Sistemas</span>
+                <span class="concepto-chip">Interdependencia</span>
+                <span class="concepto-chip">Causa y efecto</span>
+                <span class="concepto-chip">Estructura</span>
+                <span class="concepto-chip">Función</span>
+                <span class="concepto-chip">Patrones</span>
+                <span class="concepto-chip">Balance</span>
+                <span class="concepto-chip">Perspectiva</span>
+                <span class="concepto-chip">Responsabilidad</span>
+                <span class="concepto-chip">Identidad</span>
+                <span class="concepto-chip">Energía</span>
+                <span class="concepto-chip">Evidencia</span>
+            </div>
+        </div>
+
+        <!-- Confidencialidad -->
+        <div class="confidential">
+            <strong>CONFIDENCIALIDAD —</strong> Este instrumento contiene información sensible sobre un menor de edad. Su uso está restringido al equipo psicopedagógico de SDBHS, a la dirección académica y a los actores autorizados según la política institucional de protección de datos. Su circulación no autorizada constituye una falta institucional.
+        </div>
+
+        <div class="footer">
+            San Diego Bilingual High School © 2026 · Departamento Psicopedagógico · Instrumento de Observación Psicopedagógica v2.0
+        </div>
+    </div>
+
+    <!-- Modal de configuración de Google Drive -->
+    <div class="modal-overlay" id="modal-config">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>⚙️ Configuración de Google Drive</h3>
+                <button class="modal-close" onclick="cerrarConfig()">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Para subir directamente a Google Drive, se necesita un <strong>Client ID de Google</strong> de un proyecto de Google Cloud Platform de la institución.</p>
+
+                <label>Google OAuth Client ID</label>
+                <input type="text" id="config-client-id" placeholder="XXXXXXXXXXXX-xxxxxxxxxxxxxxxxxx.apps.googleusercontent.com">
+
+                <label>ID de carpeta destino en Drive (opcional)</label>
+                <input type="text" id="config-folder-id" placeholder="Ej. 1aBcD2eFgH3iJkLmNoPqRsTuVwXyZ_-1">
+                <p style="font-size:11px; color:var(--texto-claro); margin-top:4px;">Si se deja vacío, los archivos se suben a "Mi unidad" del usuario autenticado.</p>
+
+                <div class="modal-help">
+                    <strong>¿Cómo obtener el Client ID?</strong>
+                    <ol>
+                        <li>Ingresar a <code>console.cloud.google.com</code> con la cuenta institucional.</li>
+                        <li>Crear un proyecto nuevo (ej. "SDBHS Psicopedagogía").</li>
+                        <li>Activar la <strong>Google Drive API</strong> en "APIs y servicios".</li>
+                        <li>En "Credenciales", crear un <strong>OAuth 2.0 Client ID</strong> tipo "Aplicación web".</li>
+                        <li>En "Orígenes de JavaScript autorizados", agregar el dominio donde se aloje este archivo (o <code>http://localhost</code> para pruebas locales).</li>
+                        <li>Copiar el Client ID generado y pegarlo arriba.</li>
+                    </ol>
+                    <p style="margin-top:8px; margin-bottom:0;"><strong>Para obtener el ID de carpeta:</strong> abrí la carpeta en Drive y copiá el ID que aparece en la URL después de <code>/folders/</code>.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="cerrarConfig()">Cancelar</button>
+                <button class="btn-save" onclick="guardarConfig()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de notificación -->
+    <div class="toast" id="toast">
+        <button class="close-toast" onclick="cerrarToast()">×</button>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        // ============================================
+        // DATOS DEL INSTRUMENTO (DEL DOCUMENTO ORIGINAL)
+        // ============================================
+        const BLOQUES = [
+            {
+                codigo: 'I',
+                nombre: 'BLOQUE I — DIMENSIÓN SOCIOEMOCIONAL Y DE BIENESTAR',
+                claseBloque: 'bloque-I',
+                indicadores: [
+                    { codigo: 'I.1', cbc: false, descriptor: 'Regulación emocional' },
+                    { codigo: 'I.2', cbc: false, descriptor: 'Autoestima y autoconcepto académico' },
+                    { codigo: 'I.3', cbc: false, descriptor: 'Vínculo con pares y sentido de pertenencia' },
+                    { codigo: 'I.4', cbc: false, descriptor: 'Vínculo con la figura docente y figuras de autoridad' },
+                    { codigo: 'I.5', cbc: false, descriptor: 'Tolerancia a la frustración y manejo del error' }
+                ]
+            },
+            {
+                codigo: 'II',
+                nombre: 'BLOQUE II — DIMENSIÓN COGNITIVA Y DE APRENDIZAJE',
+                claseBloque: 'bloque-II',
+                indicadores: [
+                    { codigo: 'II.1',  cbc: false, descriptor: 'Atención sostenida y concentración' },
+                    { codigo: 'II.2',  cbc: false, descriptor: 'Funciones ejecutivas: planificación, inhibición y flexibilidad cognitiva' },
+                    { codigo: 'II.3',  cbc: false, descriptor: 'Memoria de trabajo y seguimiento de instrucciones' },
+                    { codigo: 'II.4',  cbc: false, descriptor: 'Procesamiento y comprensión de la información' },
+                    { codigo: 'II.5',  cbc: false, descriptor: 'Lenguaje, comunicación y expresión oral' },
+                    { codigo: 'II.6',  cbc: false, descriptor: 'Habilidades académicas instrumentales: lectoescritura y razonamiento lógico-matemático' },
+                    { codigo: 'II.7',  cbc: false, descriptor: 'Motivación, curiosidad e involucramiento en la tarea' },
+                    { codigo: 'II.8',  cbc: true,  descriptor: 'Pensamiento conceptual: va más allá del dato aislado; conecta ideas, identifica patrones y formula relaciones entre conceptos' },
+                    { codigo: 'II.9',  cbc: true,  descriptor: 'Indagación activa: formula preguntas propias, busca evidencia y revisa su comprensión durante el proceso de aprendizaje' },
+                    { codigo: 'II.10', cbc: true,  descriptor: 'Transferencia del aprendizaje: aplica lo comprendido a situaciones o contextos nuevos no trabajados directamente en clase' },
+                    { codigo: 'II.11', cbc: true,  descriptor: 'Habilidades de aprendizaje profundo: demuestra pensamiento crítico, creatividad o colaboración como herramientas para construir comprensión' }
+                ]
+            },
+            {
+                codigo: 'III',
+                nombre: 'BLOQUE III — DIMENSIÓN CONDUCTUAL Y ADAPTATIVA',
+                claseBloque: 'bloque-III',
+                indicadores: [
+                    { codigo: 'III.1', cbc: false, descriptor: 'Autorregulación conductual en el aula' },
+                    { codigo: 'III.2', cbc: false, descriptor: 'Cumplimiento de rutinas, normas y consignas' },
+                    { codigo: 'III.3', cbc: false, descriptor: 'Autonomía e iniciativa en la tarea' },
+                    { codigo: 'III.4', cbc: false, descriptor: 'Adaptación a cambios y transiciones' },
+                    { codigo: 'III.5', cbc: false, descriptor: 'Resolución de conflictos interpersonales' }
+                ]
+            },
+            {
+                codigo: 'IV',
+                nombre: 'BLOQUE IV — RESPUESTA PEDAGÓGICA DEL DOCENTE (foco complementario)',
+                claseBloque: 'bloque-IV',
+                indicadores: [
+                    { codigo: 'IV.1',  cbc: false, descriptor: 'Diferenciación e inclusión en la práctica de aula' },
+                    { codigo: 'IV.2',  cbc: false, descriptor: 'Acomodaciones y apoyos visibles para estudiantes con NEE' },
+                    { codigo: 'IV.3',  cbc: false, descriptor: 'Ajusta tiempos, materiales o consignas para asegurar el acceso al aprendizaje' },
+                    { codigo: 'IV.4',  cbc: false, descriptor: 'Clima emocional y seguridad psicológica del aula' },
+                    { codigo: 'IV.5',  cbc: false, descriptor: 'Calidad del vínculo y comunicación docente–estudiante' },
+                    { codigo: 'IV.6',  cbc: false, descriptor: 'Identificación temprana de señales de alerta' },
+                    { codigo: 'IV.7',  cbc: false, descriptor: 'Las correcciones del docente preservan la dignidad del estudiante. (No se observan dinámicas de comparación, sarcasmo o exposición que generan vergüenza)' },
+                    { codigo: 'IV.8',  cbc: false, descriptor: 'Escucha activamente: parafrasea, valida y devuelve lo que el estudiante expresa' },
+                    { codigo: 'IV.9',  cbc: true,  descriptor: 'Organiza el aprendizaje en torno a conceptos centrales visibles; los retoma durante la lección y los conecta con los 13 conceptos institucionales' },
+                    { codigo: 'IV.10', cbc: true,  descriptor: 'Formula preguntas de distinto nivel: factuales (anclan hechos), conceptuales (construyen comprensión) y provocadoras (generan debate e indagación)' },
+                    { codigo: 'IV.11', cbc: true,  descriptor: 'Diseña para la transferencia y da voz al estudiante: sus preguntas e intereses influyen en la dirección del aprendizaje' },
+                    { codigo: 'IV.12', cbc: true,  descriptor: 'Evalúa comprensión profunda —no solo memorización— mediante tareas que exigen razonar, conectar y justificar con evidencia' }
+                ]
+            }
+        ];
+
+        // ============================================
+        // RENDERIZADO DE LA TABLA (DESKTOP)
+        // ============================================
+        function renderizarTabla() {
+            const tbody = document.getElementById('tabla-tbody');
+            tbody.innerHTML = '';
+
+            BLOQUES.forEach(bloque => {
+                // Encabezado del bloque
+                const trBloque = document.createElement('tr');
+                trBloque.className = `bloque-header ${bloque.claseBloque}`;
+                trBloque.innerHTML = `<td colspan="7">${bloque.nombre}</td>`;
+                tbody.appendChild(trBloque);
+
+                // Indicadores
+                bloque.indicadores.forEach(ind => {
+                    const tr = document.createElement('tr');
+                    if (ind.cbc) tr.classList.add('cbc-indicator');
+                    const star = ind.cbc
+                        ? '<span class="star-cbc" title="Indicador alineado con la Planificación Conceptual CBC/IGE">★</span>'
+                        : '<span class="star-standard">·</span>';
+
+                    tr.innerHTML = `
+                        <td class="col-code">${ind.codigo}</td>
+                        <td class="col-star">${star}</td>
+                        <td class="descriptor-cell">${ind.descriptor}</td>
+                        <td class="rating-cell"><input type="radio" name="punt_${ind.codigo}" value="1" data-sync="punt_${ind.codigo}"></td>
+                        <td class="rating-cell"><input type="radio" name="punt_${ind.codigo}" value="2" data-sync="punt_${ind.codigo}"></td>
+                        <td class="rating-cell"><input type="radio" name="punt_${ind.codigo}" value="3" data-sync="punt_${ind.codigo}"></td>
+                        <td class="rating-cell"><input type="radio" name="punt_${ind.codigo}" value="4" data-sync="punt_${ind.codigo}"></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Fila única de observación por bloque (al final del bloque)
+                const trObs = document.createElement('tr');
+                trObs.className = `bloque-obs ${bloque.claseBloque}`;
+                trObs.innerHTML = `
+                    <td colspan="7">
+                        <label class="bloque-obs-label">📝 Observaciones / Hallazgos — Bloque ${bloque.codigo}</label>
+                        <textarea name="obs_bloque_${bloque.codigo}" data-sync-bloque-obs="${bloque.codigo}" placeholder="Observaciones generales del bloque: hallazgos cualitativos, evidencias específicas, hipótesis psicopedagógicas..."></textarea>
+                    </td>
+                `;
+                tbody.appendChild(trObs);
+            });
+        }
+
+        // ============================================
+        // RENDERIZADO DE LAS TARJETAS (MOBILE)
+        // ============================================
+        function renderizarTarjetas() {
+            const container = document.getElementById('tarjetas-indicadores');
+            container.innerHTML = '';
+
+            BLOQUES.forEach(bloque => {
+                const headerCard = document.createElement('div');
+                headerCard.className = `bloque-card-header ${bloque.claseBloque}`;
+                headerCard.textContent = bloque.nombre;
+                container.appendChild(headerCard);
+
+                bloque.indicadores.forEach(ind => {
+                    const card = document.createElement('div');
+                    card.className = 'indicator-card';
+                    if (ind.cbc) card.classList.add('cbc-indicator');
+
+                    const starHTML = ind.cbc ? '<span class="indicator-card-star">★</span>' : '';
+
+                    card.innerHTML = `
+                        <div class="indicator-card-title">
+                            <span class="indicator-card-code">${ind.codigo}</span>
+                            ${starHTML}${ind.descriptor}
+                        </div>
+                        <div class="rating-row">
+                            <label class="rating-option">
+                                <input type="radio" name="punt_${ind.codigo}_m" value="1" data-sync-mobile="punt_${ind.codigo}">
+                                <div class="rating-content"><span class="num">1</span><span>Inicial</span></div>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="punt_${ind.codigo}_m" value="2" data-sync-mobile="punt_${ind.codigo}">
+                                <div class="rating-content"><span class="num">2</span><span>En des.</span></div>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="punt_${ind.codigo}_m" value="3" data-sync-mobile="punt_${ind.codigo}">
+                                <div class="rating-content"><span class="num">3</span><span>Comp.</span></div>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="punt_${ind.codigo}_m" value="4" data-sync-mobile="punt_${ind.codigo}">
+                                <div class="rating-content"><span class="num">4</span><span>Experto</span></div>
+                            </label>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Tarjeta única de observación por bloque (al final del bloque)
+                const obsCard = document.createElement('div');
+                obsCard.className = `indicator-card bloque-obs-card ${bloque.claseBloque}`;
+                obsCard.innerHTML = `
+                    <label class="bloque-obs-label">📝 Observaciones / Hallazgos — Bloque ${bloque.codigo}</label>
+                    <textarea class="card-obs-input" name="obs_bloque_${bloque.codigo}_m" data-sync-bloque-obs-mobile="${bloque.codigo}" placeholder="Observaciones generales del bloque: hallazgos cualitativos, evidencias específicas, hipótesis psicopedagógicas..." style="min-height:90px;"></textarea>
+                `;
+                container.appendChild(obsCard);
+            });
+        }
+
+        // ============================================
+        // SINCRONIZACIÓN TABLA <-> TARJETAS
+        // ============================================
+        function configurarSincronizacion() {
+            // Puntajes desktop -> mobile
+            document.querySelectorAll('[data-sync]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const name = e.target.dataset.sync;
+                    const valor = e.target.value;
+                    const mobileInput = document.querySelector(`input[name="${name}_m"][value="${valor}"]`);
+                    if (mobileInput) mobileInput.checked = true;
+                });
+            });
+            // Puntajes mobile -> desktop
+            document.querySelectorAll('[data-sync-mobile]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const name = e.target.dataset.syncMobile;
+                    const valor = e.target.value;
+                    const desktopInput = document.querySelector(`input[name="${name}"][value="${valor}"]`);
+                    if (desktopInput) desktopInput.checked = true;
+                });
+            });
+            // Observaciones de bloque desktop -> mobile
+            document.querySelectorAll('[data-sync-bloque-obs]').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const codigo = e.target.dataset.syncBloqueObs;
+                    const target = document.querySelector(`textarea[name="obs_bloque_${codigo}_m"]`);
+                    if (target) target.value = e.target.value;
+                });
+            });
+            // Observaciones de bloque mobile -> desktop
+            document.querySelectorAll('[data-sync-bloque-obs-mobile]').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const codigo = e.target.dataset.syncBloqueObsMobile;
+                    const target = document.querySelector(`textarea[name="obs_bloque_${codigo}"]`);
+                    if (target) target.value = e.target.value;
+                });
+            });
+        }
+
+        // ============================================
+        // PREPARAR DOCUMENTO PARA EXPORTACIÓN PDF
+        // ============================================
+        function prepararExportacion() {
+            document.querySelectorAll('input[type="text"], input[type="date"], input[type="time"]').forEach(input => {
+                input.setAttribute('value', input.value);
+            });
+            document.querySelectorAll('textarea').forEach(ta => {
+                ta.textContent = ta.value;
+            });
+            document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+                if (input.checked) {
+                    input.setAttribute('checked', 'checked');
+                } else {
+                    input.removeAttribute('checked');
+                }
+            });
+        }
+
+        function generarNombreArchivo() {
+            const estudianteInput = document.querySelector('input[name="estudiante"]');
+            const estudiante = (estudianteInput?.value || '').trim()
+                .replace(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ ]/g, '')
+                .replace(/\s+/g, '_') || 'sin_estudiante';
+            const fechaArchivo = new Date().toISOString().split('T')[0];
+            return `Obs_Psicopedagogica_${estudiante}_${fechaArchivo}.pdf`;
+        }
+
+        function obtenerOpcionesPDF(nombreArchivo) {
+            return {
+                margin:       [8, 8, 8, 8],
+                filename:     nombreArchivo,
+                image:        { type: 'jpeg', quality: 0.95 },
+                html2canvas:  {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+                pagebreak:    { mode: ['css', 'legacy'], avoid: ['tr', '.indicator-card', '.bloque-obs-card', '.recom-section', '.fort-area-section', '.legend-box', '.notas-section'] }
+            };
+        }
+
+        // ============================================
+        // DESCARGAR COMO PDF
+        // ============================================
+        function descargarPDF() {
+            const nombreArchivo = generarNombreArchivo();
+            prepararExportacion();
+            document.body.classList.add('pdf-export-mode');
+
+            const boton = document.querySelector('.toolbar button');
+            const textoOriginal = boton.innerHTML;
+            boton.innerHTML = '⏳ Generando...';
+            boton.disabled = true;
+
+            setTimeout(() => {
+                const elemento = document.querySelector('.container');
+                const opciones = obtenerOpcionesPDF(nombreArchivo);
+
+                html2pdf().set(opciones).from(elemento).save()
+                    .then(() => {
+                        document.body.classList.remove('pdf-export-mode');
+                        boton.innerHTML = textoOriginal;
+                        boton.disabled = false;
+                    })
+                    .catch((err) => {
+                        console.error('Error al generar PDF:', err);
+                        alert('Hubo un error al generar el PDF. Intentá usar el botón Imprimir como alternativa.');
+                        document.body.classList.remove('pdf-export-mode');
+                        boton.innerHTML = textoOriginal;
+                        boton.disabled = false;
+                    });
+            }, 150);
+        }
+
+        // ============================================
+        // GOOGLE DRIVE — CONFIGURACIÓN Y SUBIDA
+        // ============================================
+        const STORAGE_KEY = 'sdbhs_drive_config_psico';
+        let tokenClient = null;
+        let accessToken = null;
+
+        function leerConfig() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : { clientId: '', folderId: '' };
+            } catch (e) {
+                return { clientId: '', folderId: '' };
+            }
+        }
+
+        function guardarConfig() {
+            const clientId = document.getElementById('config-client-id').value.trim();
+            const folderId = document.getElementById('config-folder-id').value.trim();
+            if (!clientId) {
+                mostrarToast('Por favor ingresá un Client ID válido.', 'error');
+                return;
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ clientId, folderId }));
+            tokenClient = null; // forzar re-inicialización con el nuevo Client ID
+            accessToken = null;
+            cerrarConfig();
+            mostrarToast('✅ Configuración de Drive guardada correctamente.', 'info');
+        }
+
+        function abrirConfig() {
+            const cfg = leerConfig();
+            document.getElementById('config-client-id').value = cfg.clientId || '';
+            document.getElementById('config-folder-id').value = cfg.folderId || '';
+            document.getElementById('modal-config').classList.add('active');
+        }
+
+        function cerrarConfig() {
+            document.getElementById('modal-config').classList.remove('active');
+        }
+
+        function inicializarTokenClient(clientId) {
+            if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+                mostrarToast('Las librerías de Google aún no se cargaron. Esperá unos segundos y volvé a intentar.', 'error');
+                return null;
+            }
+            return google.accounts.oauth2.initTokenClient({
+                client_id: clientId,
+                scope: 'https://www.googleapis.com/auth/drive.file',
+                callback: (resp) => {
+                    if (resp && resp.access_token) {
+                        accessToken = resp.access_token;
+                        ejecutarSubida();
+                    } else {
+                        mostrarToast('No se obtuvo autorización de Google.', 'error');
+                    }
+                },
+                error_callback: (err) => {
+                    console.error('Auth error:', err);
+                    mostrarToast('Error de autenticación: ' + (err.message || err.type || 'desconocido'), 'error');
+                }
+            });
+        }
+
+        async function subirADrive() {
+            const cfg = leerConfig();
+            if (!cfg.clientId) {
+                mostrarToast('Primero configurá el Client ID de Google Drive (botón ⚙️ Drive).', 'error');
+                abrirConfig();
+                return;
+            }
+
+            // Si no hay token client o cambió el Client ID, re-inicializar
+            if (!tokenClient) {
+                tokenClient = inicializarTokenClient(cfg.clientId);
+                if (!tokenClient) return;
+            }
+
+            // Solicitar token (mostrará popup la primera vez, silencioso luego si el usuario sigue conectado)
+            mostrarToast('🔐 Autenticando con Google...', 'info');
+            tokenClient.requestAccessToken({ prompt: '' });
+        }
+
+        async function ejecutarSubida() {
+            const cfg = leerConfig();
+            const nombreArchivo = generarNombreArchivo();
+
+            mostrarToast('⏳ Generando PDF...', 'info');
+
+            // Generar PDF como Blob
+            prepararExportacion();
+            document.body.classList.add('pdf-export-mode');
+
+            const boton = document.querySelector('.toolbar .primary-drive');
+            const textoOriginal = boton.innerHTML;
+            boton.innerHTML = '⏳ Subiendo...';
+            boton.disabled = true;
+
+            try {
+                // Esperar un tick para que el CSS de exportación se aplique
+                await new Promise(r => setTimeout(r, 200));
+
+                const elemento = document.querySelector('.container');
+                const opciones = obtenerOpcionesPDF(nombreArchivo);
+
+                const pdfBlob = await html2pdf().set(opciones).from(elemento).outputPdf('blob');
+
+                document.body.classList.remove('pdf-export-mode');
+
+                mostrarToast('☁️ Subiendo a Google Drive...', 'info');
+
+                // Metadata para Drive
+                const metadata = {
+                    name: nombreArchivo,
+                    mimeType: 'application/pdf'
+                };
+                if (cfg.folderId) {
+                    metadata.parents = [cfg.folderId];
+                }
+
+                // Multipart upload
+                const boundary = '-------SDBHSpsicoBoundary' + Date.now();
+                const delimiter = `\r\n--${boundary}\r\n`;
+                const closeDelimiter = `\r\n--${boundary}--`;
+
+                // Convertir blob a base64 (para multipart simple)
+                const base64Data = await blobToBase64(pdfBlob);
+
+                const multipartRequestBody =
+                    delimiter +
+                    'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+                    JSON.stringify(metadata) +
+                    delimiter +
+                    'Content-Type: application/pdf\r\n' +
+                    'Content-Transfer-Encoding: base64\r\n\r\n' +
+                    base64Data +
+                    closeDelimiter;
+
+                const response = await fetch(
+                    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': `multipart/related; boundary="${boundary}"`
+                        },
+                        body: multipartRequestBody
+                    }
+                );
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
+
+                const data = await response.json();
+                const link = data.webViewLink || `https://drive.google.com/file/d/${data.id}/view`;
+                mostrarToast(
+                    `✅ Archivo subido a Drive: <a href="${link}" target="_blank">${data.name}</a>`,
+                    'success',
+                    15000
+                );
+
+                boton.innerHTML = textoOriginal;
+                boton.disabled = false;
+            } catch (err) {
+                console.error('Error al subir a Drive:', err);
+                document.body.classList.remove('pdf-export-mode');
+                let mensaje = 'Error al subir a Drive.';
+                if (err.message && err.message.includes('401')) {
+                    mensaje = 'Sesión de Google expirada. Volvé a intentar.';
+                    accessToken = null;
+                } else if (err.message && err.message.includes('403')) {
+                    mensaje = 'Sin permisos. Revisá el Client ID y los orígenes JS autorizados.';
+                } else if (err.message && err.message.includes('404')) {
+                    mensaje = 'Carpeta de destino no encontrada. Revisá el ID de carpeta.';
+                } else if (err.message) {
+                    mensaje = 'Error: ' + err.message.substring(0, 100);
+                }
+                mostrarToast(mensaje, 'error', 8000);
+                boton.innerHTML = textoOriginal;
+                boton.disabled = false;
+            }
+        }
+
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    // Quitar el prefijo "data:application/pdf;base64,"
+                    const result = reader.result;
+                    const base64 = result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // ============================================
+        // NOTIFICACIONES (TOAST)
+        // ============================================
+        let toastTimeout = null;
+        function mostrarToast(mensaje, tipo = 'success', duracion = 4500) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            toast.classList.remove('error', 'info');
+            if (tipo === 'error') toast.classList.add('error');
+            if (tipo === 'info') toast.classList.add('info');
+            msgEl.innerHTML = mensaje;
+            toast.classList.add('active');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { toast.classList.remove('active'); }, duracion);
+        }
+
+        function cerrarToast() {
+            document.getElementById('toast').classList.remove('active');
+            if (toastTimeout) clearTimeout(toastTimeout);
+        }
+
+        // ============================================
+        // LIMPIAR FORMULARIO
+        // ============================================
+        function limpiarFormulario() {
+            if (confirm('¿Borrar todos los datos del formulario? Esta acción no se puede deshacer.')) {
+                document.querySelectorAll('input[type="text"], input[type="date"], input[type="time"], textarea').forEach(el => el.value = '');
+                document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarTabla();
+            renderizarTarjetas();
+            configurarSincronizacion();
+
+            // Cerrar modal con clic fuera
+            document.getElementById('modal-config').addEventListener('click', (e) => {
+                if (e.target.id === 'modal-config') cerrarConfig();
+            });
+        });
+    </script>
+</body>
+</html>
